@@ -3,3 +3,5 @@ dist/*
 secretInfo.ts
 yarn.lock
 yarn-error.log
+src/migrations/*
+src/simple-chat-a9f14-firebase-adminsdk-5dxcg-039ee4162f.json

@@ -12,7 +12,7 @@ import { Server } from "./Server";
 import { User } from "./User";
 
 //TODO: choose between Firebase auth/another service
-
+//TODO: add a many to many relation to users, presence system?
 @ObjectType()
 @Entity()
 export class Channel {
@@ -39,7 +39,7 @@ export class Channel {
   author!: User;
 
   /**The server that owns this channel */
-  @Field(() => [Server])
+  @Field(() => Server)
   @ManyToOne(() => Server)
   owner!: Server;
 

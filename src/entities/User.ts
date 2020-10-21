@@ -14,9 +14,10 @@ import { Server } from "./Server";
 @ObjectType()
 @Entity()
 export class User {
+  /**The UID from Firebase */
   @Field()
   @PrimaryKey()
-  id!: number;
+  id!: string;
 
   @Field(() => String)
   @Property({ type: "date" })
@@ -33,9 +34,6 @@ export class User {
   @Field()
   @Property()
   email!: string;
-
-  @Property()
-  password: string;
 
   @Field(() => Date)
   @Property({ type: "date", nullable: true })

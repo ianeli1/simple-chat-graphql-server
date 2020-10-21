@@ -1,15 +1,21 @@
 import { MikroORM } from "@mikro-orm/core";
-import { rds_connection } from "../secretInfo";
+import { rds_connection } from "./secretInfo";
 import path from "path";
+import { Channel } from "./entities/Channel";
+import { User } from "./entities/User";
+import { Message } from "./entities/Message";
+import { Server } from "./entities/Server";
+import { Emote } from "./entities/Emote";
 
 export default {
-  entities: [],
+  entities: [User, Message, Channel, Server, Emote],
   dbName: "simplechat",
   type: "postgresql",
   user: rds_connection.user,
   password: rds_connection.password,
   host: rds_connection.endpoint,
   port: rds_connection.port,
+  debug: true,
   migrations: {
     path: path.join(__dirname, "./migrations"),
     pattern: /^[\w-]+\d+\.[tj]s$/,

@@ -4,11 +4,12 @@ import { Channel } from "./Channel";
 import { Emote } from "./Emote";
 import { User } from "./User";
 
+//TODO: add support for images and invites
 @ObjectType()
 @Entity()
 export class Message {
   @Field()
-  @PrimaryKey()
+  @PrimaryKey({ serializedPrimaryKey: true })
   id!: number;
 
   @Field(() => String)
@@ -28,7 +29,7 @@ export class Message {
 
   /**Emotes to be displayed */
   @Field(() => [Emote])
-  @Property()
+  @Property({ nullable: true })
   emotes?: Emote[];
 
   /**The channel this message was sent in */
