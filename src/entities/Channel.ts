@@ -11,8 +11,6 @@ import { Message } from "./Message";
 import { Server } from "./Server";
 import { User } from "./User";
 
-//TODO: choose between Firebase auth/another service
-//TODO: add a many to many relation to users, presence system?
 @ObjectType()
 @Entity()
 export class Channel {

@@ -10,7 +10,7 @@ import { MessageData } from "./types";
 export class MessageResolver {
   @Query(() => [Message])
   async allMessages(@Ctx() { em }: Context) {
-    return await em.find(Message, {});
+    return await em.find(Message, {}, { populate: true });
   }
 
   @Query(() => [Message], { nullable: true })
@@ -36,7 +36,7 @@ export class MessageResolver {
     const author = await em.findOne(
       User,
       { id: req.session.uid },
-      { populate: ["servers.channels"] }
+      { populate: true }
     );
     const channel = await em.findOne(Channel, { id: channelId });
     if (author && channel) {
