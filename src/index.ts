@@ -22,6 +22,7 @@ import { ServerResolver } from "./resolvers/Server";
 import { MiscResolver } from "./resolvers/Misc";
 import { InviteResolver } from "./resolvers/Invite";
 import { RelationResolver } from "./resolvers/UserRelations";
+import path from "path"
 
 console.log("Starting server...");
 
@@ -45,7 +46,7 @@ async function main() {
     app.use(express.json());
 
     const pgStore = connectPg(session);
-
+    app.use(express.static(path.join(path.resolve(__dirname, ".."), "public"), {dotfiles: "allow"}))
     app.use(
       session({
         name: "sid",
@@ -101,9 +102,9 @@ async function main() {
 
     
 
-    const server = app.listen(4000, () => {
+    const server = app.listen(80, () => {
       alertDiscord("⚡⚡Server started!");
-      console.log(`Server started on port ${4000}!`);
+      console.log(`Server started on port ${80}!`);
     });
 
     apolloServer.installSubscriptionHandlers(server)
