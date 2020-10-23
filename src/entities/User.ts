@@ -48,4 +48,13 @@ export class User {
   @Field(() => [Server])
   @OneToMany(() => Server, (server) => server.author)
   serversOwned = new Collection<Server>(this);
+
+  @Field(() => [User])
+  @ManyToMany(() => User)
+  friends = new Collection<User>(this)
+
+  /**Collection of users that have sent this user a friend request */
+  @Field(() => [User])
+  @ManyToMany(() => User)
+  friendRequests = new Collection<User>(this)
 }

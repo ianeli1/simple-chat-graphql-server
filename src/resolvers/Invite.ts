@@ -1,4 +1,4 @@
-import { Arg, Ctx, InputType, Query, Resolver } from "type-graphql";
+import { Arg, Ctx, InputType, Mutation, Query, Resolver } from "type-graphql";
 import { Invite } from "../entities/Invite";
 import { Server } from "../entities/Server";
 import { User } from "../entities/User";
@@ -12,6 +12,7 @@ export class InviteResolver {
     return await em.find(Invite, {}, { populate: true });
   }
 
+  @Query(() => [Invite], {nullable: true})
   async invites(@Arg("serverId") serverId: number, @Ctx() { em }: Context) {
     const server = await em.findOne(
       Server,
@@ -25,6 +26,7 @@ export class InviteResolver {
     }
   }
 
+  @Query(() => Invite, {nullable: true})
   async invite(@Arg("inviteId") inviteId: number, @Ctx() { em }: Context) {
     const invite = await em.findOne(
       Invite,
@@ -34,6 +36,7 @@ export class InviteResolver {
     return invite;
   }
 
+  @Mutation(() => Invite, {nullable: true})
   async createInvite(
     @Arg("serverId") serverId: number,
     @Arg("expire", () => Date, { nullable: true }) expire: Date | null,
@@ -62,6 +65,7 @@ export class InviteResolver {
     }
   }
 
+  @Mutation(() => Server, {nullable: true})
   async useInvite(
     @Arg("inviteId") inviteId: number,
     @Ctx() { em, req }: Context

@@ -1,6 +1,6 @@
 import { User } from "../entities/User";
 import { Context } from "../types";
-import { Arg, Ctx, InputType, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Ctx, InputType, Mutation, Publisher, PubSub, Query, Resolver, Root, Subscription } from "type-graphql";
 import { Message } from "../entities/Message";
 import { Channel } from "../entities/Channel";
 import { MessageData } from "./types";
@@ -23,11 +23,20 @@ export class MessageResolver {
     return channel?.messages.getItems() ?? null;
   }
 
+  @Subscription(() => Message, {
+    topics: "NEW_MESSAGE",
+    filter: ({args, payload}: {payload: Message, args: {channelId: number}}) => args.channelId === payload.channel.id
+  })
+  async newMessage(@Arg("channelId") _channelId: number, @Root() message: Message){
+    return message
+  }
+
   @Mutation(() => Message, { nullable: true })
   async createMessage(
     @Arg("channelId") channelId: number,
     @Arg("message") messageData: MessageData,
-    @Ctx() { em, req }: Context
+    @Ctx() { em, req }: Context,
+    @PubSub("NEW_MESSAGE") publish: Publisher<Message>
   ) {
     if (!req.session.uid) {
       return null;
@@ -45,7 +54,8 @@ export class MessageResolver {
         channel,
         author,
       });
-      em.persistAndFlush(message);
+      await em.persistAndFlush(message);
+      publish(message)
       return message;
     } else {
       return null;

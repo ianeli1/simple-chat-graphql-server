@@ -20,6 +20,8 @@ import { MessageResolver } from "./resolvers/Message";
 import { ChannelResolver } from "./resolvers/Channel";
 import { ServerResolver } from "./resolvers/Server";
 import { MiscResolver } from "./resolvers/Misc";
+import { InviteResolver } from "./resolvers/Invite";
+import { RelationResolver } from "./resolvers/UserRelations";
 
 console.log("Starting server...");
 
@@ -77,8 +79,11 @@ async function main() {
           ChannelResolver,
           ServerResolver,
           MiscResolver,
+          InviteResolver,
+          RelationResolver
         ],
         validate: false,
+        emitSchemaFile: true
       }),
       context: ({ req, res }): Context => ({
         em: orm.em,
@@ -94,10 +99,14 @@ async function main() {
       cors: false,
     });
 
-    app.listen(4000, () => {
+    
+
+    const server = app.listen(4000, () => {
       alertDiscord("⚡⚡Server started!");
       console.log(`Server started on port ${4000}!`);
     });
+
+    apolloServer.installSubscriptionHandlers(server)
   } catch (e) {
     //TODO: error handle lmao
     throw e;
