@@ -135,6 +135,7 @@ type Mutation {
 type ProtoInvite {
   author: ProtoUser!
   createdAt: DateTime!
+  expire: DateTime
   id: Float!
   owner: ProtoServer!
 }

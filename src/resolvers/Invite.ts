@@ -29,6 +29,9 @@ class ProtoInvite {
   @Field()
   createdAt: Date;
 
+  @Field(() => Date, { nullable: true })
+  expire?: Date;
+
   @Field(() => ProtoUser)
   author: ProtoUser;
 
