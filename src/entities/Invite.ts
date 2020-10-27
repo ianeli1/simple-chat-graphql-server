@@ -10,11 +10,11 @@ export class Invite {
   @PrimaryKey({})
   id!: number;
 
-  @Field(() => String)
+  @Field(() => Date)
   @Property({ type: "date" })
   createdAt = new Date();
 
-  @Field(() => String)
+  @Field(() => Date)
   @Property({ type: "date", onUpdate: () => new Date() })
   updatedAt = new Date();
 
@@ -29,7 +29,7 @@ export class Invite {
   owner!: Server;
 
   /**The expiry date of this invite */
-  @Field(() => String, { nullable: true })
+  @Field(() => Date, { nullable: true })
   @Property({ type: "date", nullable: true })
   expire?: Date;
 }

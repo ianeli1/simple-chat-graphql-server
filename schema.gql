@@ -3,14 +3,29 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+type APIError {
+  code: ErrorCode!
+  message: String!
+}
+
 type Channel {
   author: User!
-  createdAt: String!
+  createdAt: DateTime!
   id: Float!
   messages: [Message!]!
   name: String!
   owner: Server!
-  updatedAt: String!
+  updatedAt: DateTime!
+}
+
+type ChannelResponse {
+  channel: Channel
+  error: APIError
+}
+
+type Confirmation {
+  error: APIError
+  ok: Boolean!
 }
 
 """
@@ -20,33 +35,73 @@ scalar DateTime
 
 type Emote {
   author: User!
-  createdAt: String!
+  createdAt: DateTime!
   id: Float!
   image: String!
   name: String!
   owner: Server!
-  updatedAt: String!
+  updatedAt: DateTime!
+}
+
+input EmoteData {
+  image: String!
+  name: String!
+}
+
+type EmoteObject {
+  id: Float!
+  image: String!
+  name: String!
+  owner: ProtoServer!
+}
+
+type EmoteResponse {
+  emotes: [EmoteObject!]
+  error: APIError
+}
+
+enum ErrorCode {
+  CHANNEL_DOESNT_EXIST
+  EMOTE_DOESNT_EXIST
+  INVITE_DOESNT_EXIST
+  NOT_LOGGED_IN
+  NOT_SERVER_ADMIN
+  NOT_SERVER_MEMBER
+  OTHER
+  SERVER_DOESNT_EXIST
+  UNKNOWN
+  USER_DOESNT_EXIST
 }
 
 type Invite {
   author: User!
-  createdAt: String!
-  expire: String
+  createdAt: DateTime!
+  expire: DateTime
   id: Float!
   owner: Server!
-  updatedAt: String!
+  updatedAt: DateTime!
+}
+
+type InviteListResponse {
+  error: APIError
+  invites: [ProtoInvite!]
+}
+
+type InviteResponse {
+  error: APIError
+  invite: ProtoInvite
 }
 
 type Message {
   author: User!
   channel: Channel!
   content: String!
-  createdAt: String!
+  createdAt: DateTime!
   emotes: [Emote!]
   id: Float!
   image: String
   invite: Invite
-  updatedAt: String!
+  updatedAt: DateTime!
 }
 
 input MessageData {
@@ -55,48 +110,98 @@ input MessageData {
 
 type Mutation {
   acceptRequest(userId: String!): Boolean
-  createChannel(name: String!, serverId: Float!): Channel
-  createInvite(expire: DateTime, serverId: Float!): Invite
-  createMessage(channelId: Float!, message: MessageData!): Message
-  createServer(name: String!): Server
-  createUser(token: String!, userData: UserData!): User!
+  changeAvatar(
+    """URL of the new avatar"""
+    image: String!
+  ): Confirmation!
+  changeServerIcon(image: String!, serverId: Float!): Confirmation!
+  createChannel(name: String!, serverId: Float!): Confirmation!
+  createEmote(emote: EmoteData!, serverId: Float!): Confirmation!
+  createInvite(expire: DateTime, serverId: Float!): InviteResponse!
+  createMessage(channelId: Float!, message: MessageData!): Confirmation!
+  createServer(name: String!): Confirmation!
+  createUser(token: String!, userData: UserData!): UserResponse!
   declineRequest(userId: String!): Boolean!
-  leaveServer(serverId: Float!): User
+  kickMember(serverId: Float!, userId: String!): Confirmation!
+  leaveServer(serverId: Float!): Confirmation!
+  removeChannel(channelId: Float!): Confirmation!
+  removeEmote(emoteId: Float!): Confirmation!
   removeFriend(userId: String!): Boolean
+  removeInvite(inviteId: Float!): Confirmation!
   sendRequest(userId: String!): Boolean
-  useInvite(inviteId: Float!): Server
+  useInvite(inviteId: Float!): Confirmation!
+}
+
+type ProtoInvite {
+  author: ProtoUser!
+  createdAt: DateTime!
+  id: Float!
+  owner: ProtoServer!
+}
+
+type ProtoServer {
+  icon: String
+  id: Float!
+  name: String!
+}
+
+type ProtoUser {
+  birthday: DateTime
+  createdAt: DateTime!
+  icon: String
+  id: String!
+  isFriend: Boolean
+  name: String!
+  sentFriendRequest: Boolean
+}
+
+type ProtoUserResponse {
+  error: APIError
+  user: ProtoUser
 }
 
 type Query {
-  allChannels: [Channel!]!
-  allInvites: [Invite!]!
+  allChannels: [Channel!]! @deprecated(reason: "debug")
+  allInvites: InviteListResponse!
   allMessages: [Message!]!
-  channel(channelId: Float!): Channel
-  channels(serverId: Float!): [Channel!]
+  channel(channelId: Float!): ChannelResponse!
+  channels(serverId: Float!): [Channel!] @deprecated(reason: "useless")
   debugGetToken(email: String!, password: String!): String
-  emotes: [Emote!]!
-  invite(inviteId: Float!): Invite
-  invites(serverId: Float!): [Invite!]
+  emotes: EmoteResponse!
+  invite(inviteId: Float!): InviteResponse!
+  invites(serverId: Float!): InviteListResponse!
   login(token: String!): User
-  me: User
+  me: UserResponse!
   messages(channelId: Float!): [Message!]
-  myEmotes: [Emote!]
-  myServers: [Server!]
-  servers: [Server!]!
-  user(id: String!): User
-  users: [User!]!
+  myEmotes: EmoteResponse!
+  myServers: ServerListResponse! @deprecated(reason: "doesn't populate all values, deemed unnecessary, use the query me{}")
+  server(serverId: Float!): ServerResponse!
+  servers: [Server!]! @deprecated(reason: "debug")
+  user(id: String!): ProtoUserResponse!
+  users: [User!]! @deprecated(reason: "only for debug use")
 }
 
 type Server {
   author: User!
   channels: [Channel!]!
-  createdAt: String!
+  createdAt: DateTime!
   emotes: [Emote!]!
+  icon: String
   id: Float!
   invites: [Invite!]!
   members: [User!]!
   name: String!
-  updatedAt: String!
+  updatedAt: DateTime!
+}
+
+type ServerListResponse {
+  error: APIError
+  servers: [Server!]
+}
+
+type ServerResponse {
+  error: APIError
+  server: Server
 }
 
 type Subscription {
@@ -104,20 +209,26 @@ type Subscription {
 }
 
 type User {
-  birthday: DateTime!
-  createdAt: String!
+  birthday: DateTime
+  createdAt: DateTime!
   email: String!
   friendRequests: [User!]!
   friends: [User!]!
+  icon: String
   id: String!
   name: String!
   servers: [Server!]!
   serversOwned: [Server!]!
-  updatedAt: String!
+  updatedAt: DateTime!
 }
 
 input UserData {
   birthday: DateTime!
   email: String!
   name: String!
+}
+
+type UserResponse {
+  error: APIError
+  user: User
 }

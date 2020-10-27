@@ -19,11 +19,11 @@ export class User {
   @PrimaryKey()
   id!: string;
 
-  @Field(() => String)
+  @Field(() => Date)
   @Property({ type: "date" })
   createdAt = new Date();
 
-  @Field(() => String)
+  @Field(() => Date)
   @Property({ type: "date", onUpdate: () => new Date() })
   updatedAt = new Date();
 
@@ -35,9 +35,14 @@ export class User {
   @Property()
   email!: string;
 
-  @Field(() => Date)
+  @Field(() => Date, { nullable: true })
   @Property({ type: "date", nullable: true })
-  birthday: Date;
+  birthday?: Date;
+
+  /**The user's profile picture */
+  @Field({ nullable: true })
+  @Property({ nullable: true })
+  icon?: string;
 
   /**The list of servers the user has joined */
   @Field(() => [Server])
@@ -51,10 +56,10 @@ export class User {
 
   @Field(() => [User])
   @ManyToMany(() => User)
-  friends = new Collection<User>(this)
+  friends = new Collection<User>(this);
 
   /**Collection of users that have sent this user a friend request */
   @Field(() => [User])
   @ManyToMany(() => User)
-  friendRequests = new Collection<User>(this)
+  friendRequests = new Collection<User>(this);
 }

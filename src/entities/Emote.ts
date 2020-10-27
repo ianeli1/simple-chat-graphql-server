@@ -10,11 +10,11 @@ export class Emote {
   @PrimaryKey()
   id!: number;
 
-  @Field(() => String)
+  @Field(() => Date)
   @Property({ type: "date" })
   createdAt = new Date();
 
-  @Field(() => String)
+  @Field(() => Date)
   @Property({ type: "date", onUpdate: () => new Date() })
   updatedAt = new Date();
 

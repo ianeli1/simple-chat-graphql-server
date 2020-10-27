@@ -22,11 +22,11 @@ export class Server {
   @PrimaryKey()
   id!: number;
 
-  @Field(() => String)
+  @Field(() => Date)
   @Property({ type: "date" })
   createdAt = new Date();
 
-  @Field(() => String)
+  @Field(() => Date)
   @Property({ type: "date", onUpdate: () => new Date() })
   updatedAt = new Date();
 
@@ -34,6 +34,11 @@ export class Server {
   @Field()
   @Property()
   name!: string;
+
+  /**This server's icon */
+  @Field({ nullable: true })
+  @Property({ nullable: true })
+  icon?: string;
 
   /**Who created the server */
   @Field(() => User)
