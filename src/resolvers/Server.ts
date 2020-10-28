@@ -161,7 +161,7 @@ export class ServerResolver {
     if (!req.session.uid) {
       return new Confirmation(notLoggedIn());
     }
-    if (/https?:\/\/(www\.)?[a-zA-Z0-9.]+\.[a-zA-Z]+\//.test(image)) {
+    if (!/https?:\/\/(www\.)?[a-zA-Z0-9.]+\.[a-zA-Z]+\//.test(image)) {
       return new Confirmation(
         new APIError(ErrorCode.OTHER, "Invalid image URL")
       );
