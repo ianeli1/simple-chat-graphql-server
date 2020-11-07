@@ -1,4 +1,10 @@
-import { Field, InputType, ObjectType, registerEnumType } from "type-graphql";
+import {
+  Field,
+  InputType,
+  Int,
+  ObjectType,
+  registerEnumType,
+} from "type-graphql";
 
 @InputType()
 export class UserData {
@@ -17,6 +23,18 @@ export class UserData {
 export class MessageData {
   @Field()
   content!: string;
+
+  /**The ids of the emotes used */
+  @Field(() => [Int!], { nullable: true })
+  emotes?: number[];
+
+  /**The URL of the image sent */
+  @Field(() => String, { nullable: true })
+  image?: string;
+
+  /**The id of the invite */
+  @Field(() => Int, { nullable: true })
+  invite?: number;
 }
 
 @InputType()
@@ -26,6 +44,12 @@ export class EmoteData {
 
   @Field()
   image!: string;
+}
+
+@ObjectType()
+export class ProtoEmote extends EmoteData {
+  @Field()
+  id: number;
 }
 
 @ObjectType()

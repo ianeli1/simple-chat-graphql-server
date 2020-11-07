@@ -22,7 +22,7 @@ import {
 import { ProtoUser } from "./User";
 
 @ObjectType()
-class ProtoInvite {
+export class ProtoInvite {
   @Field()
   id: number;
 

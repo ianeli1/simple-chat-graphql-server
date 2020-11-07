@@ -20,7 +20,11 @@ import {
   ErrorCode,
   MessageData,
   notLoggedIn,
+  ProtoEmote,
 } from "./types";
+import { Emote } from "../entities/Emote";
+import { Invite } from "../entities/Invite";
+import { ProtoInvite } from "./Invite";
 
 function filterNewMessageSubscription({
   args,
@@ -77,6 +81,14 @@ export class MessageResolver {
       { id: req.session.uid },
       { populate: true }
     );
+
+    //Get all required emotes, only their basic data
+    const emotes = messageData.emotes
+      ? ((await em.find(Emote, { id: messageData.emotes })) as ProtoEmote[])
+      : undefined;
+    const invite = messageData.invite
+      ? ((await em.findOne(Invite, { id: messageData.invite })) as ProtoInvite)
+      : undefined;
     const channel = await em.findOne(Channel, { id: channelId });
     if (!author) {
       return new Confirmation(new APIError(ErrorCode.USER_DOESNT_EXIST));
@@ -88,6 +100,9 @@ export class MessageResolver {
         content: messageData.content,
         channel,
         author,
+        emotes,
+        invite,
+        image: messageData.image ?? undefined,
       });
       await em.persistAndFlush(message);
       publish(message);

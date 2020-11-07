@@ -106,6 +106,9 @@ type Message {
 
 input MessageData {
   content: String!
+  emotes: [Int!]
+  image: String
+  invite: Int
 }
 
 type Mutation {
