@@ -161,11 +161,11 @@ export class UserResolver {
     }
   }
 
-  @Query(() => User, { nullable: true })
+  @Query(() => UserResponse)
   async login(
     @Arg("token") token: string,
     @Ctx() { auth, em, req }: Context
-  ): Promise<UserResponse | null> {
+  ): Promise<UserResponse> {
     try {
       const decoded = await auth.verifyIdToken(token);
       const user = await em.findOne(
