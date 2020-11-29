@@ -174,7 +174,7 @@ type Query {
   emotes: EmoteResponse!
   invite(inviteId: Float!): InviteResponse!
   invites(serverId: Float!): InviteListResponse!
-  login(token: String!): User
+  login(token: String!): UserResponse!
   me: UserResponse!
   messages(channelId: Float!): [Message!]
   myEmotes: EmoteResponse!

@@ -1,6 +1,7 @@
 import { EntityManager, IDatabaseDriver, Connection } from "@mikro-orm/core";
 import { Request, Response } from "express";
-import { admin } from "firebase-admin/lib/auth";
+import { Session } from "express-session";
+import admin from "firebase-admin"
 
 interface SessionKeys {
   uid?: string;
@@ -8,8 +9,8 @@ interface SessionKeys {
 
 export interface Context {
   em: EntityManager<any> & EntityManager<IDatabaseDriver<Connection>>;
-  req: Request & { session: Express.Session & SessionKeys };
+  req: Request & { session: Session & SessionKeys };
   res: Response;
-  auth: admin.auth.Auth;
+  auth: ReturnType<typeof admin.auth>;
   clientAuth: firebase.auth.Auth;
 }
