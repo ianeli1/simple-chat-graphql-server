@@ -76,8 +76,8 @@ async function main() {
         cookie: {
           maxAge: 1000 * 60 * 60 * 24 * 365, //1 year
           httpOnly: true,
-          secure: false,
-          sameSite: "lax",
+          secure: true,
+          sameSite: "none",
         },
       })
     );
@@ -112,18 +112,10 @@ async function main() {
     });
 
     const httpsServer = https.createServer(credentials, app)
-
-    const server = app.listen(80, () => {
-      alertDiscord("⚡⚡Server started!");
-      console.log(`Server started on port ${80}!`);
-    });
-
     httpsServer.listen(443, () => {
       console.log("HTTPS server created")
       alertDiscord("HTTPS SERVER RUNNING!!!")
     })
-
-    apolloServer.installSubscriptionHandlers(server)
     apolloServer.installSubscriptionHandlers(httpsServer)
   } catch (e) {
     //TODO: error handle lmao
