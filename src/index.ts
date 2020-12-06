@@ -37,6 +37,11 @@ const credentials = {
   ca
 }
 
+const corsOptions = {
+  origin: "http://localhost:8080",
+  credentials: true
+}
+
 async function main() {
   try {
     console.log("Connecting to Firebase...");
@@ -53,7 +58,7 @@ async function main() {
     await orm.getMigrator().up();
     console.log("Connected to RDS!");
     const app = express();
-    app.use(cors());
+    app.use(cors(corsOptions));
     app.use(express.json());
 
     const pgStore = connectPg(session);
@@ -76,8 +81,8 @@ async function main() {
         cookie: {
           maxAge: 1000 * 60 * 60 * 24 * 365, //1 year
           httpOnly: true,
-          secure: true,
-          sameSite: "none",
+          secure: false,
+          sameSite: "lax",
         },
       })
     );
@@ -108,7 +113,7 @@ async function main() {
 
     apolloServer.applyMiddleware({
       app,
-      cors: false,
+      cors: corsOptions,
     });
 
     const httpsServer = https.createServer(credentials, app)
@@ -116,6 +121,11 @@ async function main() {
       console.log("HTTPS server created")
       alertDiscord("HTTPS SERVER RUNNING!!!")
     })
+    const httpServer = app.listen(80, () => {
+      console.log("Running on port 80 too")
+    })
+
+    apolloServer.installSubscriptionHandlers(httpServer)
     apolloServer.installSubscriptionHandlers(httpsServer)
   } catch (e) {
     //TODO: error handle lmao
