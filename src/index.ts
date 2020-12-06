@@ -1,4 +1,6 @@
 import express from "express";
+import https from "https"
+import fs from "fs"
 import { MikroORM } from "@mikro-orm/core";
 import cors from "cors";
 import { ApolloServer } from "apollo-server-express";
@@ -24,6 +26,16 @@ import { InviteResolver } from "./resolvers/Invite";
 import { RelationResolver } from "./resolvers/UserRelations";
 
 console.log("Starting server...");
+
+const privateKey = fs.readFileSync("/etc/letsencrypt/live/simplechat.mywire.org/privkey.pem", "utf-8")
+const certificate = fs.readFileSync("/etc/letsencrypt/live/simplechat.mywire.org/cert.pem", "utf-8")
+const ca = fs.readFileSync("/etc/letsencrypt/live/simplechat.mywire.org/chain.pem", "utf-8")
+
+const credentials = {
+  key: privateKey,
+  cert: certificate,
+  ca
+}
 
 async function main() {
   try {
@@ -99,14 +111,14 @@ async function main() {
       cors: false,
     });
 
-    
+    const httpsServer = https.createServer(credentials, app)
 
-    const server = app.listen(4000, () => {
-      alertDiscord("⚡⚡Server started!");
-      console.log(`Server started on port ${4000}!`);
-    });
+    httpsServer.listen(443, () => {
+      console.log("HTTPS server created")
+      alertDiscord("HTTPS SERVER RUNNING!!!")
+    })
 
-    apolloServer.installSubscriptionHandlers(server)
+    apolloServer.installSubscriptionHandlers(httpsServer)
   } catch (e) {
     //TODO: error handle lmao
     throw e;
