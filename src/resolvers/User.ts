@@ -18,7 +18,7 @@ import {
   UserData,
 } from "./types";
 import { Server } from "../entities/Server";
-import { alertDiscord } from "../secretInfo";
+import { alertDiscord } from "../utilities";
 
 @ObjectType()
 export class ProtoUser {

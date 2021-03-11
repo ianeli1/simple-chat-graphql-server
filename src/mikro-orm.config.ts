@@ -1,5 +1,4 @@
 import { MikroORM } from "@mikro-orm/core";
-import { rds_connection } from "./secretInfo";
 import path from "path";
 import { Channel } from "./entities/Channel";
 import { User } from "./entities/User";
@@ -7,18 +6,20 @@ import { Message } from "./entities/Message";
 import { Server } from "./entities/Server";
 import { Emote } from "./entities/Emote";
 import { Invite } from "./entities/Invite";
+import { config } from "dotenv";
 
+config();
 export default {
   entities: [User, Message, Channel, Server, Emote, Invite],
-  dbName: "simplechat",
+  dbName: "postgres",
   type: "postgresql",
-  user: rds_connection.user,
-  password: rds_connection.password,
-  host: rds_connection.endpoint,
-  port: rds_connection.port,
   debug: true,
   migrations: {
     path: path.join(__dirname, "./migrations"),
     pattern: /^[\w-]+\d+\.[tj]s$/,
   },
+  user: process.env.PG_USER,
+  password: process.env.PG_PASSWORD,
+  host: process.env.PG_ENDPOINT,
+  port: process.env.PG_PORT,
 } as Parameters<typeof MikroORM.init>[0];
