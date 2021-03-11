@@ -11,7 +11,7 @@ import { config } from "dotenv";
 config();
 export default {
   entities: [User, Message, Channel, Server, Emote, Invite],
-  dbName: "postgres",
+  dbName: "simplechat",
   type: "postgresql",
   debug: true,
   migrations: {
