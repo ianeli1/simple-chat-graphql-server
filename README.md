@@ -6,9 +6,9 @@ Backend server for simple-chat-native, written using Apollo GraphQL Server and T
 - GraphQL
 - Firebase Auth
 ## Usage
-There's many credentials you'll need to deploy this server, such as:
-- Firebase Admin
-- AWS RDS (or equivalent local/remote PostgreSQL DB access)
+There's some credentials you'll need to deploy this server, such as:
+- Firebase Admin (and a regular Firebase credential to use the debug login function)
+- PostgreSQL DB access credentials
 - A Discord webhook (optional, for easy error reporting)
 
 Once you got all the required credential, you'll need to link it with the program by editing `src/index.ts`.
