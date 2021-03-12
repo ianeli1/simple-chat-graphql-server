@@ -11,7 +11,6 @@ import { EmoteResolver } from "./resolvers/Emote";
 import { UserResolver } from "./resolvers/User";
 import * as admin from "firebase-admin";
 import * as firebase from "firebase";
-import admin_config from "./firebaseAdminCred.json";
 import { Context, pgCredentials } from "./types";
 import { MessageResolver } from "./resolvers/Message";
 import { ChannelResolver } from "./resolvers/Channel";
@@ -33,12 +32,13 @@ async function main() {
     PG_PORT,
     SECRET,
     FIREBASE_CONFIG,
+    FIREBASE_ADMIN_CRED,
   } = process.env;
   if (!PG_USER && !PG_PASSWORD && !PG_ENDPOINT && !PG_PORT) {
     throw new Error("PostreSQL credentials missing");
   }
 
-  if (!FIREBASE_CONFIG) {
+  if (!FIREBASE_CONFIG && !FIREBASE_ADMIN_CRED) {
     throw new Error("Firebase config missing");
   }
 
@@ -52,10 +52,12 @@ async function main() {
   try {
     console.log("Connecting to Firebase...");
     admin.initializeApp({
-      credential: admin.credential.cert(admin_config as admin.ServiceAccount),
+      credential: admin.credential.cert(
+        JSON.parse(FIREBASE_ADMIN_CRED!) as admin.ServiceAccount
+      ),
       databaseURL: "https://simple-chat-a9f14.firebaseio.com",
     });
-    firebase.initializeApp(JSON.parse(FIREBASE_CONFIG));
+    firebase.initializeApp(JSON.parse(FIREBASE_CONFIG!));
     const auth = admin.auth();
     const clientAuth = firebase.auth();
     console.log("Connected to Firebase!");
