@@ -70,6 +70,7 @@ async function main() {
       cors({
         origin: [
           /localhost/,
+          /null/,
           process.env.ORIGIN!, //where requests are gonna be coming from
         ],
         credentials: true,
