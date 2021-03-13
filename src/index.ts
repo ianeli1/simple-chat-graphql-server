@@ -34,6 +34,7 @@ async function main() {
     FIREBASE_CONFIG,
     FIREBASE_ADMIN_CRED,
   } = process.env;
+  console.log(process.env.FIREBASE_ADMIN_CRED?.slice(163));
   if (!PG_USER && !PG_PASSWORD && !PG_ENDPOINT && !PG_PORT) {
     throw new Error("PostreSQL credentials missing");
   }
@@ -66,7 +67,15 @@ async function main() {
     await orm.getMigrator().up();
     console.log("Connected to Postgre!");
     const app = express();
-    app.use(cors());
+    app.use(
+      cors({
+        origin: [
+          /localhost/,
+          process.env.ORIGIN!, //where requests are gonna be coming from
+        ],
+        credentials: true,
+      })
+    );
     app.use(express.json());
 
     const pgStore = connectPg(session);
