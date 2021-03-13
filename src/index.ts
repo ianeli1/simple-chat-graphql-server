@@ -34,7 +34,6 @@ async function main() {
     FIREBASE_CONFIG,
     FIREBASE_ADMIN_CRED,
   } = process.env;
-  console.log(process.env.FIREBASE_ADMIN_CRED?.slice(163));
   if (!PG_USER && !PG_PASSWORD && !PG_ENDPOINT && !PG_PORT) {
     throw new Error("PostreSQL credentials missing");
   }
